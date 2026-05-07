@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+
+  <title>Pod Wiatr</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Caveat:wght@600;700&display=block"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}"
+  >
+</head>
+
+<body>
+
+<div class="app-shell">
+
+  <header class="top-navbar">
+
+    <div class="top-navbar-left">
+
+      <a
+        href="{% if session.get('user_id') %}{{ url_for('leads') }}{% else %}{{ url_for('login') }}{% endif %}"
+        class="brand"
+      >
+        Pod Wiatr
+      </a>
+
+      {% if session.get("user_id") %}
+      <span class="page-label">
+        Zgłoszenia
+      </span>
+      {% endif %}
+
+    </div>
+
+    {% if session.get("user_id") %}
+    <div class="top-navbar-actions">
+
+      <div class="top-search-box">
+
+  <i class="bi bi-search"></i>
+
+  <input
+    type="text"
+    id="tableSearchInput"
+    placeholder="Szukaj..."
+    autocomplete="off"
+  >
+
+</div>
+
+      <form method="GET" class="filter-form">
+
+        <select
+          name="range"
+          class="filter-select"
+          onchange="this.form.submit()"
+        >
+          <option value="">
+            Wszystkie turnusy
+          </option>
+
+          {% for item in event_ranges %}
+          <option
+            value="{{ item.event_date_label }}"
+            {% if selected_range == item.event_date_label %}
+              selected
+            {% endif %}
+          >
+            {{ item.event_date_label }}
+          </option>
+          {% endfor %}
+        </select>
+
+      </form>
+
+      <a
+        href="{{ url_for('export_excel', range=selected_range) }}"
+        class="btn btn-dark"
+      >
+        <i class="bi bi-file-earmark-excel"></i>
+        Excel
+      </a>
+
+      <a
+        href="{{ url_for('print_leads', range=selected_range) }}"
+        class="btn btn-light"
+        target="_blank"
+      >
+        <i class="bi bi-printer"></i>
+        Druk
+      </a>
+
+      <a
+        href="{{ url_for('change_password') }}"
+        class="btn btn-light"
+      >
+        <i class="bi bi-key"></i>
+        Hasło
+      </a>
+
+      <div class="top-user-pill">
+        <i class="bi bi-person-circle"></i>
+        {{ session.get("user_email") }}
+      </div>
+
+      <a
+        href="{{ url_for('logout') }}"
+        class="btn btn-light"
+      >
+        <i class="bi bi-box-arrow-right"></i>
+        Wyloguj
+      </a>
+
+    </div>
+
+    <button
+      type="button"
+      class="mobile-menu-button"
+      id="openMenuBtn"
+      aria-label="Otwórz menu"
+    >
+      <i class="bi bi-list"></i>
+    </button>
+
+    {% endif %}
+
+  </header>
+
+  {% if session.get("user_id") %}
+
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+
+  <aside class="side-menu" id="sideMenu">
+
+    <div class="side-menu-head">
+
+      <button
+        type="button"
+        class="menu-close-btn"
+        id="closeMenuBtn"
+        aria-label="Zamknij menu"
+      >
+        <span></span>
+        <span></span>
+      </button>
+
+    </div>
+
+    <nav class="side-nav">
+
+      <a href="{{ url_for('leads') }}" class="side-nav-link is-active">
+        <i class="bi bi-table"></i>
+        <span>Zgłoszenia</span>
+      </a>
+
+      <a
+        href="{{ url_for('export_excel', range=selected_range) }}"
+        class="side-nav-link"
+      >
+        <i class="bi bi-file-earmark-excel"></i>
+        <span>Pobierz Excel</span>
+      </a>
+
+      <a
+        href="{{ url_for('print_leads', range=selected_range) }}"
+        class="side-nav-link"
+        target="_blank"
+      >
+        <i class="bi bi-printer"></i>
+        <span>Drukuj</span>
+      </a>
+
+      <a href="{{ url_for('create_user') }}" class="side-nav-link">
+        <i class="bi bi-person-plus"></i>
+        <span>Dodaj użytkownika</span>
+      </a>
+
+      <a href="{{ url_for('change_password') }}" class="side-nav-link">
+        <i class="bi bi-key"></i>
+        <span>Zmień hasło</span>
+      </a>
+
+      <a href="{{ url_for('logout') }}" class="side-nav-link">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Wyloguj</span>
+      </a>
+
+    </nav>
+
+  </aside>
+
+  {% endif %}
+
+  <main class="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+
+    <div class="footer-left">
+      Software powered by
+      <a
+        href="https://www.handkeholding.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Handke Holding OÜ
+      </a>
+    </div>
+
+    <div class="footer-right">
+      Made in Estonia
+    </div>
+
+  </footer>
+
+</div>
+
+{% if session.get("user_id") %}
+<script>
+  const openMenuBtn = document.getElementById("openMenuBtn");
+  const closeMenuBtn = document.getElementById("closeMenuBtn");
+  const sideMenu = document.getElementById("sideMenu");
+  const menuBackdrop = document.getElementById("menuBackdrop");
+
+  function openMenu() {
+    if (!sideMenu || !menuBackdrop) return;
+
+    sideMenu.classList.add("is-open");
+    menuBackdrop.classList.add("is-open");
+    document.body.classList.add("menu-open");
+  }
+
+  function closeMenu() {
+    if (!sideMenu || !menuBackdrop) return;
+
+    sideMenu.classList.remove("is-open");
+    menuBackdrop.classList.remove("is-open");
+    document.body.classList.remove("menu-open");
+  }
+
+  openMenuBtn?.addEventListener("click", openMenu);
+  closeMenuBtn?.addEventListener("click", closeMenu);
+  menuBackdrop?.addEventListener("click", closeMenu);
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      closeMenu();
+    }
+  });
+
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 1024) {
+      closeMenu();
+    }
+  });
+
+</script>
+
+<script>
+  const tableSearchInput = document.getElementById("tableSearchInput");
+
+  tableSearchInput?.addEventListener("input", function () {
+
+    const value = this.value.trim().toLowerCase();
+
+    const rows = document.querySelectorAll(".table tbody tr");
+
+    rows.forEach(function (row) {
+
+      const text = row.innerText.toLowerCase();
+
+      if (text.includes(value)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+
+    });
+
+  });
+</script>
+{% endif %}
+
+</body>
+</html>
