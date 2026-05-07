@@ -1,4 +1,5 @@
 Flask
-openpyxl
+gunicorn
 python-dotenv
+openpyxl
 Werkzeug
