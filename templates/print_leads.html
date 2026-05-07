@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Zgłoszenia do druku</title>
+
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 7mm;
+    }
+
+    body {
+      margin: 0;
+      padding: 12px;
+
+      background: #fff;
+      color: #111;
+
+      font-family: Arial, sans-serif;
+      font-size: 9px;
+    }
+
+    .print-actions {
+      margin-bottom: 12px;
+    }
+
+    .print-btn {
+      border: 1px solid #111;
+      background: #111;
+      color: #fff;
+
+      padding: 7px 12px;
+
+      cursor: pointer;
+
+      font-size: 11px;
+    }
+
+    .print-head {
+      margin-bottom: 3px;
+      padding-bottom: 1px;
+    }
+
+    .print-head-line {
+      display: flex;
+
+      align-items: center;
+      justify-content: flex-start;
+
+      gap: 14px;
+
+      white-space: nowrap;
+
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .print-head-line strong {
+      margin: 0;
+
+      font-size: 15px;
+      font-weight: 700;
+
+      line-height: 1;
+    }
+
+    table {
+      width: 100%;
+
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border: 1px solid #222;
+
+      padding: 4px 5px;
+
+      text-align: left;
+      vertical-align: top;
+
+      overflow-wrap: break-word;
+      word-break: normal;
+
+      line-height: 1.18;
+    }
+
+    th {
+      background: #f2f2f2;
+
+      font-size: 7.5px;
+      font-weight: 700;
+
+      text-transform: uppercase;
+    }
+
+    td {
+      font-size: 8.5px;
+    }
+
+    .col-no {
+      width: 10px;
+    }
+
+    .col-name {
+      width: 130px;
+    }
+
+    .col-birth {
+      width: 46px;
+    }
+
+    .col-pesel {
+      width: 52px;
+    }
+
+    .col-phone {
+      width: 44px;
+    }
+
+    .col-address {
+      width: 175px;
+    }
+
+    .col-guardian {
+      width: 85px;
+    }
+
+    .col-email {
+      width: 105px;
+    }
+
+    .col-notes {
+      width: 140px;
+    }
+
+    @media print {
+
+      body {
+        padding: 0;
+      }
+
+      .print-actions {
+        display: none;
+      }
+    }
+
+    .print-head-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+
+  gap: 14px;
+
+  white-space: nowrap;
+
+  font-size: 10px;
+  line-height: 1;
+}
+
+.print-head-line strong {
+  margin: 0;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  line-height: 1;
+}
+  </style>
+</head>
+
+<body>
+
+  <div class="print-actions">
+    <button class="print-btn" onclick="window.print()">
+      Drukuj / zapisz jako PDF
+    </button>
+  </div>
+
+  <header class="print-head">
+
+    <div class="print-head-line">
+
+      <strong>Zgłoszenia</strong>
+
+      <span>
+        Zakres:
+        {% if selected_range %}
+          {{ selected_range }}
+        {% else %}
+          wszystkie turnusy
+        {% endif %}
+      </span>
+
+      <span>
+        Wygenerowano:
+        {{ now.strftime("%d.%m.%Y %H:%M") }}
+      </span>
+
+      <span>Pod Wiatr</span>
+
+    </div>
+
+  </header>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th class="col-no">Lp.</th>
+        <th class="col-name">Uczestnik</th>
+        <th class="col-birth">Data ur.</th>
+        <th class="col-pesel">PESEL</th>
+        <th class="col-phone">Tel. uczest.</th>
+        <th class="col-address">Adres</th>
+        <th class="col-guardian">Opiekun</th>
+        <th class="col-phone">Tel. opiek.</th>
+        <th class="col-email">E-mail</th>
+        <th class="col-notes">Uwagi</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      {% for lead in leads %}
+
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ lead.participant_full_name }}</td>
+        <td>{{ lead.birth_date }}</td>
+        <td>{{ lead.pesel }}</td>
+        <td>{{ lead.participant_phone }}</td>
+        <td>{{ lead.address }} {{ lead.city_postal_code }}</td>
+        <td>{{ lead.guardian_full_name }}</td>
+        <td>{{ lead.guardian_phone }}</td>
+        <td>{{ lead.guardian_email }}</td>
+        <td>{{ lead.notes }}</td>
+      </tr>
+
+      {% else %}
+
+      <tr>
+        <td colspan="10">
+          Brak zgłoszeń.
+        </td>
+      </tr>
+
+      {% endfor %}
+
+    </tbody>
+
+  </table>
+
+</body>
+</html>
