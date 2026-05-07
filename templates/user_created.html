@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="login-page">
+
+  <div class="login-card login-card-wide">
+
+    <div class="login-brand">
+      Pod Wiatr
+    </div>
+
+    <p class="login-subtitle">
+      Użytkownik został utworzony
+    </p>
+
+    <div class="login-success-box">
+
+      <p>
+        Konto dla adresu:
+      </p>
+
+      <strong>
+        {{ email }}
+      </strong>
+
+      <p>
+        Skopiuj poniższy link i wyślij go użytkownikowi.
+        Po wejściu w link użytkownik sam ustawi hasło.
+      </p>
+
+    </div>
+
+    <div class="token-box">
+      {{ activation_link }}
+    </div>
+
+    <a
+      href="{{ url_for('create_user') }}"
+      class="login-submit login-link-button"
+    >
+      <i class="bi bi-person-plus"></i>
+      Dodaj kolejnego użytkownika
+    </a>
+
+    <a
+      href="{{ url_for('leads') }}"
+      class="login-secondary-link"
+    >
+      Wróć do zgłoszeń
+    </a>
+
+  </div>
+
+</section>
+
+{% endblock %}
